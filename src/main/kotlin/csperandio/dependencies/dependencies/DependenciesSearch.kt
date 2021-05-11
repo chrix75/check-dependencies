@@ -15,7 +15,7 @@ class DependenciesSearch {
         val current = mutableListOf<String>()
         val lines = block.split(Regex("\r?\n"))
         var started = false
-        var declarations = mutableListOf<String>()
+        val declarations = mutableListOf<String>()
 
         for (l in lines) {
             if (l.contains("<dependency>")) {
