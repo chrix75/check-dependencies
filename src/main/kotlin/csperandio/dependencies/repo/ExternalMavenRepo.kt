@@ -4,9 +4,10 @@ import csperandio.dependencies.dependencies.Dependency
 import org.jsoup.Jsoup
 
 class ExternalMavenRepo(private val url: String) : MavenRepo {
+    private val cache = HashMap<Dependency, String?>()
+
     override fun date(dependency: Dependency): String? {
-        val lines = fileList(dependency)
-        return versionDate(lines, dependency.artifact)
+        return cache.getOrPut(dependency) { versionDate(fileList(dependency), dependency.artifact) }
     }
 
     private fun versionDate(lines: List<String>, artifact: String): String? {

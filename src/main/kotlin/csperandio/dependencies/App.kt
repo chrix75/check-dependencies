@@ -3,7 +3,6 @@ package csperandio.dependencies
 import csperandio.dependencies.dependencies.Dependency
 import csperandio.dependencies.files.PomFinder
 import csperandio.dependencies.repo.ExternalMavenRepo
-import csperandio.dependencies.repo.LocalMavenRepo
 import java.io.File
 import kotlin.system.exitProcess
 
@@ -22,13 +21,11 @@ fun main(args: Array<String>) {
     val finder = PomFinder(rootDir)
     val poms = finder.all("pom.xml")
 
-    val checker = VersionChecker(LocalMavenRepo(), ExternalMavenRepo("https://repo1.maven.org/maven2"))
+    val checker = VersionChecker(ExternalMavenRepo("https://repo1.maven.org/maven2"))
 
-    val allDates = mutableMapOf<Dependency, String>()
+    val allDates = mutableMapOf<Dependency, String?>()
     poms.forEach { allDates.putAll(checker.dates(it.readText()))}
 
-    val result = File(args[1])
-    val writer = CsvWriter(result)
+    val writer = CsvWriter(File(args[1]))
     writer.write(allDates)
-
 }
