@@ -22,11 +22,10 @@ fun main(args: Array<String>) {
     val finder = PomFinder(rootDir)
     val poms = finder.all("pom.xml")
 
-    val externalRepo = ExternalMavenRepo("https://repo1.maven.org/maven2")
-    val checker = VersionChecker(LocalMavenRepo(), externalRepo)
+    val checker = VersionChecker(LocalMavenRepo(), ExternalMavenRepo("https://repo1.maven.org/maven2"))
 
-    val allDates = mutableSetOf<Pair<Dependency, String>>()
-    poms.forEach { allDates.addAll(checker.dates(it.readText()))}
+    val allDates = mutableMapOf<Dependency, String>()
+    poms.forEach { allDates.putAll(checker.dates(it.readText()))}
 
     val result = File(args[1])
     val writer = CsvWriter(result)

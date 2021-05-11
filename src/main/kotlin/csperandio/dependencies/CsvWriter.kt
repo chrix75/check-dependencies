@@ -4,9 +4,9 @@ import csperandio.dependencies.dependencies.Dependency
 import java.io.File
 
 class CsvWriter(private val result: File) {
-    fun write(allDates: Set<Pair<Dependency, String>>) {
+    fun write(allDates: Map<Dependency, String>) {
         addHeader()
-        allDates.forEach { result.appendText("${it.first.group}:${it.first.artifact},${it.first.version},${it.second}\n") }
+        allDates.forEach { result.appendText("${it.key.group}:${it.key.artifact},${it.key.version},${it.value}\n") }
     }
 
     private fun addHeader() {
