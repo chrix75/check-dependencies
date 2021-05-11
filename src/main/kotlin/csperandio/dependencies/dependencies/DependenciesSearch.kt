@@ -3,7 +3,7 @@ package csperandio.dependencies.dependencies
 class DependenciesSearch {
 
     fun dependencies(pom: String): List<Dependency> {
-        val workingPom = pom.replace(Regex(" +"), "")
+        val workingPom = pom.replace(Regex("[ \t]+"), "")
         val declarations = dependencyDefinitions(workingPom)
 
         val dependencyExtraction = DependencyExtraction()
