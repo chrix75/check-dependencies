@@ -24,6 +24,10 @@ class DependencyExtraction {
             if (l.matches(versionSearchRegex)) {
                 version = l.replace(versionReplaceRegex, "")
             }
+
+            if (group.isNotEmpty() && artifact.isNotEmpty() && version.isNotEmpty()) {
+                break
+            }
         }
 
         if (group.isEmpty() || artifact.isEmpty() || version.isEmpty()) {

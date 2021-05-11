@@ -7,7 +7,6 @@ class DependenciesSearch {
         val declarations = dependencyDefinitions(workingPom)
 
         val dependencyExtraction = DependencyExtraction()
-
         return declarations.map { dependencyExtraction.fromDeclaration(it) }
             .filterNotNull()
     }
@@ -27,6 +26,7 @@ class DependenciesSearch {
                 started = false
                 current.add(l)
                 declarations.add(current.joinToString("\n"))
+                current.clear()
             }
 
             if (started) {
