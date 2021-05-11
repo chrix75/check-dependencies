@@ -1,7 +1,7 @@
 package csperandio.dependencies
 
 import csperandio.dependencies.dependencies.Dependency
-import csperandio.dependencies.files.PomFinder
+import csperandio.dependencies.files.FileFinder
 import csperandio.dependencies.repo.ExternalMavenRepo
 import java.io.File
 import kotlin.system.exitProcess
@@ -18,7 +18,7 @@ fun main(args: Array<String>) {
         exitProcess(1)
     }
 
-    val finder = PomFinder(rootDir)
+    val finder = FileFinder(rootDir)
     val poms = finder.all("pom.xml")
 
     val checker = VersionChecker(ExternalMavenRepo("https://repo1.maven.org/maven2"))

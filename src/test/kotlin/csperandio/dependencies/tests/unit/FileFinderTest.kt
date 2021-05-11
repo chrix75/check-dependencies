@@ -1,14 +1,14 @@
 package csperandio.dependencies.tests.unit
 
-import csperandio.dependencies.files.PomFinder
+import csperandio.dependencies.files.FileFinder
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.assertTrue
 
-class PomFinderTest {
+class FileFinderTest {
     @Test
     internal fun findPomInDirectories() {
-        val finder = PomFinder(File("./src/test/tree"))
+        val finder = FileFinder(File("./src/test/tree"))
         val pomFiles = finder.all("pom.xml")
         val expected = listOf(
             File("./src/test/tree/dir1/dir11/pom.xml"),
