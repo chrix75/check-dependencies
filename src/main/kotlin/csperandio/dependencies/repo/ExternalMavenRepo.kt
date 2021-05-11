@@ -24,10 +24,14 @@ class ExternalMavenRepo(val url: String) : MavenRepo {
 
     private fun versionList(dependency: Dependency): List<String> {
         val uri = dependency.group.replace('.', '/')
-        val depUrl = "${url}/${uri}/${dependency.artefact}"
-        val doc = Jsoup.connect(depUrl).get()
-        val lines = doc.text().split("\n")
-        return lines
+        val depUrl = "${url}/${uri}/${dependency.artifact}"
+        try {
+            val doc = Jsoup.connect(depUrl).get()
+            val lines = doc.text().split("\n")
+            return lines
+        } catch (e: Exception) {
+            return emptyList()
+        }
     }
 
 }
