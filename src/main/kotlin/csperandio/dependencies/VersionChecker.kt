@@ -5,7 +5,7 @@ import csperandio.dependencies.dependencies.Dependency
 import csperandio.dependencies.repo.LocalMavenRepo
 import csperandio.dependencies.repo.MavenRepo
 
-class VersionChecker(val localRepo: LocalMavenRepo, val externalRepo: MavenRepo? = null) {
+class VersionChecker(private val localRepo: LocalMavenRepo, private val externalRepo: MavenRepo? = null) {
     fun date(dependency: Dependency): String? {
         val foundDate = localRepo.date(dependency)
 
