@@ -1,47 +1,24 @@
 package csperandio.dependencies.dependencies
 
 class DependencyExtraction {
-    private val groupSearchRegex = Regex("<groupId>.+</groupId>")
-    private val groupReplaceRegex = Regex("</?groupId>")
-    private val artifactSearchRegex = Regex("<artifactId>.+</artifactId>")
-    private val artifactReplaceRegex = Regex("</?artifactId>")
-    private val versionSearchRegex = Regex("<version>.+</version>")
-    private val versionReplaceRegex = Regex("</?version>")
+    private val groupSearchRegex = Regex("<groupId>(?<groupId>.+?)</groupId>")
+    private val artifactSearchRegex = Regex("<artifactId>(?<artifactId>.+?)</artifactId>")
+    private val versionSearchRegex = Regex("<version>(?<version>.+?)</version>")
+    private val exclusionsSearchRegex = Regex("<exclusions>.+?</exclusions>")
 
-    fun fromDeclaration(decl: String): Dependency? {
-        var group = ""
-        var artifact = ""
-        var version = ""
-        val lines = decl.split(Regex("\r?\n"))
-
-        for (l in lines) {
-            if (l.matches(groupSearchRegex)) {
-                group = l.replace(groupReplaceRegex, "")
-            }
-            if (l.matches(artifactSearchRegex)) {
-                artifact = l.replace(artifactReplaceRegex, "")
-            }
-            if (l.matches(versionSearchRegex)) {
-                version = l.replace(versionReplaceRegex, "")
-            }
-
-            if (isCompleteDeclaration(group, artifact, version) || hasStartedExclusions(l)) {
-                break
-            }
-        }
+    fun fromDeclaration(dependency: String): Dependency? {
+        val dependencyWithoutExclusions = dependency.replace(exclusionsSearchRegex, "")
+        val group = groupSearchRegex.find(dependencyWithoutExclusions)?.groups?.get("groupId")?.value
+        val artifact = artifactSearchRegex.find(dependencyWithoutExclusions)?.groups?.get("artifactId")?.value
+        val version = versionSearchRegex.find(dependencyWithoutExclusions)?.groups?.get("version")?.value
 
         if (missingInfo(group, artifact, version)) {
             return null
         }
 
-        return Dependency(group, artifact, version)
+        return Dependency(group!!, artifact!!, version!!)
     }
 
-    private fun hasStartedExclusions(line: String) = line.contains("<exclusions>")
-
-    private fun isCompleteDeclaration(group: String, artifact: String, version: String) =
-        group.isNotEmpty() && artifact.isNotEmpty() && version.isNotEmpty()
-
-    private fun missingInfo(group: String, artifact: String, version: String) =
-        group.isEmpty() || artifact.isEmpty() || version.isEmpty() || version.startsWith("\${")
+    private fun missingInfo(group: String?, artifact: String?, version: String?) =
+        group == null || artifact == null || version == null || version.startsWith("\${")
 }
