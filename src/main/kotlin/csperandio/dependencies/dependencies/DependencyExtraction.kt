@@ -24,12 +24,24 @@ class DependencyExtraction {
             if (l.matches(versionSearchRegex)) {
                 version = l.replace(versionReplaceRegex, "")
             }
+
+            if (isCompleteDeclaration(group, artifact, version) || hasStartedExclusions(l)) {
+                break
+            }
         }
 
-        if (group.isEmpty() || artifact.isEmpty() || version.isEmpty()) {
+        if (missingInfo(group, artifact, version)) {
             return null
         }
 
         return Dependency(group, artifact, version)
     }
+
+    private fun hasStartedExclusions(line: String) = line.contains("<exclusions>")
+
+    private fun isCompleteDeclaration(group: String, artifact: String, version: String) =
+        group.isNotEmpty() && artifact.isNotEmpty() && version.isNotEmpty()
+
+    private fun missingInfo(group: String, artifact: String, version: String) =
+        group.isEmpty() || artifact.isEmpty() || version.isEmpty() || version.startsWith("\${")
 }

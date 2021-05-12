@@ -3,11 +3,10 @@ package csperandio.dependencies.dependencies
 class DependenciesSearch {
 
     fun dependencies(pom: String): List<Dependency> {
-        val workingPom = pom.replace(Regex(" +"), "")
+        val workingPom = pom.replace(Regex("[ \t]+"), "")
         val declarations = dependencyDefinitions(workingPom)
 
         val dependencyExtraction = DependencyExtraction()
-
         return declarations.map { dependencyExtraction.fromDeclaration(it) }
             .filterNotNull()
     }
@@ -16,7 +15,7 @@ class DependenciesSearch {
         val current = mutableListOf<String>()
         val lines = block.split(Regex("\r?\n"))
         var started = false
-        var declarations = mutableListOf<String>()
+        val declarations = mutableListOf<String>()
 
         for (l in lines) {
             if (l.contains("<dependency>")) {
@@ -27,6 +26,7 @@ class DependenciesSearch {
                 started = false
                 current.add(l)
                 declarations.add(current.joinToString("\n"))
+                current.clear()
             }
 
             if (started) {

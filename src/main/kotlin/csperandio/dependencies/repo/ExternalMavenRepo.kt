@@ -5,29 +5,25 @@ import org.jsoup.Jsoup
 
 class ExternalMavenRepo(val url: String) : MavenRepo {
     override fun date(dependency: Dependency): String? {
-        val lines = versionList(dependency)
-        return versionDate(lines, dependency.version)
+        val lines = fileList(dependency)
+        return versionDate(lines, dependency.artifact)
     }
 
-    private fun versionDate(lines: List<String>, version: String): String? {
-        val marker = "${version}/"
-        val found = lines.filter { l -> l.startsWith(marker) }
-        if (found.isEmpty()) {
-            return null
-        }
-
-        val s = found[0].replace(Regex("${marker} +"), "")
-            .replace(Regex(" .+$"), "")
-
-        return s
+    private fun versionDate(lines: List<String>, artifact: String): String? {
+        val found = lines.firstOrNull { l -> l.startsWith(artifact) }
+        return found?.replace(Regex("^\\S+\\s+"), "")?.replace(Regex("\\s+.+$"), "")
     }
 
-    private fun versionList(dependency: Dependency): List<String> {
+    private fun fileList(dependency: Dependency): List<String> {
         val uri = dependency.group.replace('.', '/')
-        val depUrl = "${url}/${uri}/${dependency.artefact}"
-        val doc = Jsoup.connect(depUrl).get()
-        val lines = doc.text().split("\n")
-        return lines
+        val depUrl = "${url}/${uri}/${dependency.artifact}/${dependency.version}"
+        try {
+            val doc = Jsoup.connect(depUrl).get()
+            val lines = doc.text().split("\n")
+            return lines
+        } catch (e: Exception) {
+            return emptyList()
+        }
     }
 
 }
