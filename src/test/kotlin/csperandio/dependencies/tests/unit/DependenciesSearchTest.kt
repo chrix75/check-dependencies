@@ -39,8 +39,8 @@ class DependenciesSearchTest {
                     "    </dependencies>\n" +
                     "</project>"
 
-        val search = DependenciesSearch()
-        val dependencies = search.dependencies(simplePom)
+        val search = DependenciesSearch(simplePom.reader())
+        val dependencies = search.dependencies()
 
         val expected = listOf(
             Dependency("junit", "junit", "3.8.1"),
@@ -83,8 +83,8 @@ class DependenciesSearchTest {
                     "    </dependencies>\n" +
                     "</project>"
 
-        val search = DependenciesSearch()
-        val dependencies = search.dependencies(pomWithProperties)
+        val search = DependenciesSearch(pomWithProperties.reader())
+        val dependencies = search.dependencies()
 
         val expected = listOf(
             Dependency("junit", "junit", "3.8.1"),
@@ -136,8 +136,8 @@ class DependenciesSearchTest {
                     "\n" +
                     "</project>"
 
-        val search = DependenciesSearch()
-        val dependencies = search.dependencies(pomWithProperties)
+        val search = DependenciesSearch(pomWithProperties.reader())
+        val dependencies = search.dependencies()
 
         val expected = listOf(
             Dependency("org.projectlombok", "lombok", "1.16.20"),
