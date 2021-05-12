@@ -2,6 +2,7 @@ package csperandio.dependencies.dependencies
 
 import org.apache.maven.model.Model
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader
+import java.util.*
 
 class DependenciesSearch {
 
@@ -19,30 +20,26 @@ class DependenciesSearch {
 
     private fun mavenPluginDependencies(model: Model): List<Dependency> {
         return model.build?.plugins?.filter { it.groupId != null && it.artifactId != null && it.version != null }
-            ?.mapNotNull {
-                if (it.version.startsWith("\${")) {
-                    val propName = it.version.substring(2, it.version.length - 1)
-                    val realVersion = model.properties[propName] as String?
-                    if (realVersion == null) null else Dependency(it.groupId, it.artifactId, realVersion)
-                } else {
-                    Dependency(it.groupId, it.artifactId, it.version)
-                }
-            }
+            ?.mapNotNull { Dependency(it.groupId, it.artifactId, it.version) }
+            ?.mapNotNull { updateVersionByProperty(it, model.properties) }
             ?: emptyList()
     }
 
     private fun mavenDependencies(model: Model): List<Dependency> {
         return model.dependencies
-            .filter { it.groupId != null && it.artifactId != null && it.version != null }
-            .mapNotNull {
-                if (it.version.startsWith("\${")) {
-                    val propName = it.version.substring(2, it.version.length - 1)
-                    val realVersion = model.properties[propName] as String?
-                    if (realVersion == null) null else Dependency(it.groupId, it.artifactId, realVersion)
-                } else {
-                    Dependency(it.groupId, it.artifactId, it.version)
-                }
-            }
+            ?.filter { it.groupId != null && it.artifactId != null && it.version != null }
+            ?.mapNotNull { Dependency(it.groupId, it.artifactId, it.version) }
+            ?.mapNotNull { updateVersionByProperty(it, model.properties) }
+            ?: emptyList()
     }
 
+    private fun updateVersionByProperty(dependency: Dependency, properties: Properties): Dependency? {
+        if (dependency.version.startsWith("\${")) {
+            val propName = dependency.version.substring(2, dependency.version.length - 1)
+            val realVersion = properties[propName] as String?
+            return if (realVersion == null) null else Dependency(dependency.group, dependency.artifact, realVersion)
+        } else {
+            return dependency
+        }
+    }
 }
