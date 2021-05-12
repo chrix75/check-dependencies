@@ -7,8 +7,7 @@ class DependenciesSearch {
         val declarations = dependencyDefinitions(workingPom)
 
         val dependencyExtraction = DependencyExtraction()
-        return declarations.map { dependencyExtraction.fromDeclaration(it) }
-            .filterNotNull()
+        return declarations.mapNotNull { dependencyExtraction.fromDeclaration(it) }
     }
 
     private fun dependencyDefinitions(block: String): List<String> {

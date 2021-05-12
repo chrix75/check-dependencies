@@ -3,10 +3,11 @@ package csperandio.dependencies.repo
 import csperandio.dependencies.dependencies.Dependency
 import org.jsoup.Jsoup
 
-class ExternalMavenRepo(val url: String) : MavenRepo {
+class ExternalMavenRepo(private val url: String) : MavenRepo {
+    private val cache = HashMap<Dependency, String?>()
+
     override fun date(dependency: Dependency): String? {
-        val lines = fileList(dependency)
-        return versionDate(lines, dependency.artifact)
+        return cache.getOrPut(dependency) { versionDate(fileList(dependency), dependency.artifact) }
     }
 
     private fun versionDate(lines: List<String>, artifact: String): String? {
@@ -17,12 +18,11 @@ class ExternalMavenRepo(val url: String) : MavenRepo {
     private fun fileList(dependency: Dependency): List<String> {
         val uri = dependency.group.replace('.', '/')
         val depUrl = "${url}/${uri}/${dependency.artifact}/${dependency.version}"
-        try {
+        return try {
             val doc = Jsoup.connect(depUrl).get()
-            val lines = doc.text().split("\n")
-            return lines
+            doc.text().split("\n")
         } catch (e: Exception) {
-            return emptyList()
+            emptyList()
         }
     }
 
