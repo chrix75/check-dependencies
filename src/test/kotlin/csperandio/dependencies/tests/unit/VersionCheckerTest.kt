@@ -3,7 +3,7 @@ package csperandio.dependencies.tests.unit
 import csperandio.dependencies.VersionChecker
 import csperandio.dependencies.dependencies.Dependency
 import csperandio.dependencies.repo.ExternalMavenRepo
-import csperandio.dependencies.repo.LocalMavenRepo
+import csperandio.dependencies.repo.MavenRepo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -11,7 +11,7 @@ import kotlin.test.assertNull
 
 internal class VersionCheckerTest {
 
-    lateinit var localRepo: LocalMavenRepo
+    private lateinit var localRepo: MavenRepo
 
     @BeforeEach
     internal fun setUp() {
@@ -32,9 +32,8 @@ internal class VersionCheckerTest {
         val externalRepo = ExternalMavenRepo("https://repo1.maven.org/maven2")
         val checker = VersionChecker(localRepo, externalRepo)
         val dependency = Dependency("org.apache.commons", "commons-lang3", "3.0")
-        val commonsLan3Date = checker.date(dependency)
-        assertEquals("2011-07-19", commonsLan3Date)
-        assertEquals("2011-07-19", localRepo.dependencies[dependency.coordinates])
+        val commonsLang3Date = checker.date(dependency)
+        assertEquals("2011-07-19", commonsLang3Date)
     }
 
     @Test

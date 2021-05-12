@@ -3,7 +3,6 @@ package csperandio.dependencies.tests.integration
 import csperandio.dependencies.VersionChecker
 import csperandio.dependencies.dependencies.Dependency
 import csperandio.dependencies.repo.ExternalMavenRepo
-import csperandio.dependencies.repo.LocalMavenRepo
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -41,11 +40,10 @@ class VersionCheckerIntegrationTest {
                     "    </dependencies>\n" +
                     "</project>"
 
-        val externalRepo = ExternalMavenRepo("https://repo1.maven.org/maven2")
-        val checker = VersionChecker(LocalMavenRepo(), externalRepo)
+        val checker = VersionChecker(ExternalMavenRepo("https://repo1.maven.org/maven2"))
         val dates = checker.dates(simplePom)
 
-        val expected = listOf(
+        val expected = mapOf(
             Pair(Dependency("junit", "junit", "3.8.1"), "2005-09-20"),
             Pair(Dependency("log4j", "log4j", "1.2.17"), "2012-05-26")
         )
