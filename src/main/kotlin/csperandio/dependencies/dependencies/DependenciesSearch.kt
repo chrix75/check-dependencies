@@ -1,38 +1,13 @@
 package csperandio.dependencies.dependencies
 
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader
+
 class DependenciesSearch {
 
     fun dependencies(pom: String): List<Dependency> {
-        val workingPom = pom.replace(Regex("[ \t]+"), "")
-        val declarations = dependencyDefinitions(workingPom)
-
-        val dependencyExtraction = DependencyExtraction()
-        return declarations.mapNotNull { dependencyExtraction.fromDeclaration(it) }
-    }
-
-    private fun dependencyDefinitions(block: String): List<String> {
-        val current = mutableListOf<String>()
-        val lines = block.split(Regex("\r?\n"))
-        var started = false
-        val declarations = mutableListOf<String>()
-
-        for (l in lines) {
-            if (l.contains("<dependency>")) {
-                started = true
-            }
-
-            if (l.contains("</dependency>")) {
-                started = false
-                current.add(l)
-                declarations.add(current.joinToString("\n"))
-                current.clear()
-            }
-
-            if (started) {
-                current.add(l)
-            }
-        }
-
-        return declarations
+        val reader = MavenXpp3Reader()
+        val model = reader.read(pom.reader())
+        return model.dependencies.map { Dependency(it.groupId, it.artifactId, it.version) }
+            .filter { !it.version.startsWith("\${") }
     }
 }
