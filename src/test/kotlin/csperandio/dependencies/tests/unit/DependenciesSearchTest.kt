@@ -50,7 +50,7 @@ class DependenciesSearchTest {
     }
 
     @Test
-    internal fun ignoreVersionByProperty() {
+    internal fun manageVersionByProperty() {
         val pomWithProperties =
             "<project xmlns=\"http://maven.apache.org/POM/4.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
                     "         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">\n" +
@@ -87,7 +87,8 @@ class DependenciesSearchTest {
         val dependencies = search.dependencies(pomWithProperties)
 
         val expected = listOf(
-            Dependency("junit", "junit", "3.8.1")
+            Dependency("junit", "junit", "3.8.1"),
+            Dependency("log4j", "log4j", "1.2.17")
         )
         assertEquals(expected, dependencies)
     }
