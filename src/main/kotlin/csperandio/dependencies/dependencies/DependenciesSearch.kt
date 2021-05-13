@@ -4,17 +4,9 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader
 import java.io.Reader
 
 class DependenciesSearch(pom: Reader) {
-    private val reader = MavenXpp3Reader()
-    private val model = reader.read(pom)
+    private val model = MavenXpp3Reader().read(pom)
 
-    fun dependencies(): List<Dependency> {
-        val allDependencies = mutableListOf<Dependency>()
-        with(allDependencies) {
-            addAll(mavenDependencies())
-            addAll(mavenPluginDependencies())
-        }
-        return allDependencies
-    }
+    fun dependencies() = mavenDependencies() + mavenPluginDependencies()
 
     private fun mavenPluginDependencies() = model.build?.plugins
         ?.filter { it.groupId != null && it.artifactId != null && it.version != null }
