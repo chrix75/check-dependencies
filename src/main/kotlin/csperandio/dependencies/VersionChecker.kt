@@ -10,11 +10,9 @@ class VersionChecker(private vararg val repos: MavenRepo) {
         .mapNotNull { it.date(dependency) }
         .firstOrNull()
 
-    fun dates(pom: Reader): Map<Dependency, String> {
-        val search = DependenciesSearch(pom)
-        val dependencies = search.dependencies()
-
-        val map = dependencies.associateWith { date(it) }
-        return map.filterValues { it != null } as Map<Dependency, String>
-    }
+    fun dates(poms: Iterable<Reader>) = poms
+        .flatMap { DependenciesSearch(it).dependencies() }
+        .distinct()
+        .associateWith { date(it) }
+        .filterValues { it != null } as Map<Dependency, String>
 }

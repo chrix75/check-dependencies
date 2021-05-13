@@ -1,6 +1,5 @@
 package csperandio.dependencies
 
-import csperandio.dependencies.dependencies.Dependency
 import csperandio.dependencies.files.FileFinder
 import csperandio.dependencies.repo.ExternalMavenRepo
 import java.io.File
@@ -23,8 +22,7 @@ fun main(args: Array<String>) {
 
     val checker = VersionChecker(ExternalMavenRepo("https://repo1.maven.org/maven2"))
 
-    val allDates = mutableMapOf<Dependency, String>()
-    poms.forEach { allDates.putAll(checker.dates(it.reader())) }
+    val allDates = checker.dates(poms.map { it.reader() })
 
     val writer = CsvWriter(File(args[1]))
     writer.write(allDates)
