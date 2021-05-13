@@ -24,7 +24,7 @@ fun main(args: Array<String>) {
     val checker = VersionChecker(ExternalMavenRepo("https://repo1.maven.org/maven2"))
 
     val allDates = mutableMapOf<Dependency, String>()
-    poms.forEach { allDates.putAll(checker.dates(it)) }
+    poms.forEach { allDates.putAll(checker.dates(it.reader())) }
 
     val writer = CsvWriter(File(args[1]))
     writer.write(allDates)

@@ -41,7 +41,7 @@ class VersionCheckerIntegrationTest {
                     "</project>"
 
         val checker = VersionChecker(ExternalMavenRepo("https://repo1.maven.org/maven2"))
-        val dates = checker.dates(simplePom)
+        val dates = checker.dates(simplePom.reader())
 
         val expected = mapOf(
             Pair(Dependency("junit", "junit", "3.8.1"), "2005-09-20"),
